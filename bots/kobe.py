@@ -44,8 +44,7 @@ class MyClient(botpy.Client):
                 return
             elif cmd == "哈基米":
                 #上传后发送富媒体
-
-                file_url = "https://brdw-1367983852.cos.ap-chengdu.myqcloud.com/output.silk?q-sign-algorithm=sha1&q-ak=AKIDNr48oaBd-lOoqUa8nd772wB_aJHPw-sqKA3JgjRTGojqSR_ZxJkKBS121c6Mv06e&q-sign-time=1754929621;1754933221&q-key-time=1754929621;1754933221&q-header-list=host&q-url-param-list=&q-signature=4388a436b8bd59122b076bcc46d9616acf92d172&x-cos-security-token=AEwLSScBV6ROKB6u9DjjVFj7G8EAQzia385d72bed889dabe0cab0896f4e7600bWM3oOkIyq1sx-g6ccRt4-qeHOH33tQnc0iLyvbK97fd_Fl8d0E8kdMfVtRN2TlpuPilsr1dpJMPbNWZHxhLiyVuRgkjqJZAs_wG5qykuLWgK5yNhVI2QegVPu3Bpnzu0heMoIqbO1TdyYyAGrvze-7dw_-GHXA2bFFs4YwHE6D75Ime7buaQA3f4sTKYuFJdsj70GeJY9o0hBj4xdrBBLyoYns11XauLtIzI4FnOUBbGQDeshlb88sZuvyqvmPadCQ8gU0fmYBAt9n9wQS9Eaw"  # 这里需要填写上传的资源Url
+                file_url = "https://hachimi-kobe-bots.oss-cn-chengdu.aliyuncs.com/audio/hachimi/firstKey.silk?Expires=1755099805&OSSAccessKeyId=TMP.3KrTQxasZ5xUC1fGBQ1fxuxp9drDBL1dmDV65PzNzW8vtjGhfrqxv3MSRDcCBanV5QGBtHE9tZSuPVbwNWzdNV5hNr1Hc4&Signature=fw8lOU71J3sNOlTglec6etRsw%2Fo%3D"  # 这里需要填写上传的资源Url
                 uploadMedia = await message._api.post_group_file(
                     group_openid=message.group_openid,
                     file_type=3,  # 文件类型要对应上，具体支持的类型见方法说明

@@ -34,11 +34,11 @@ def pcm_to_silk(encoder_path, pcm_path, silk_path):
         print("编码器输出:", result.stdout)
 
 pcm_file = "temp.pcm"             # 临时 PCM 文件
-silk_file = "output.silk"         # 生成的 silk 文件
+# silk_file = "output.silk"         # 生成的 silk 文件
 encoder_exe = "./encoder.exe"     # 编码器可执行文件路径
-def encode(audio_path):
+def encode(audio_path,silk_file):
     try:
-        to_pcm(mp3_file, pcm_file)
+        to_pcm(audio_path, pcm_file)
         pcm_to_silk(encoder_exe, pcm_file, silk_file)
         print("转换成功:", silk_file)
         return silk_file
@@ -48,15 +48,18 @@ def encode(audio_path):
         if os.path.exists(pcm_file):
             os.remove(pcm_file)
 
+def encode_all_in_folder(folder_path, prefix=''):
+    """
+    扫描 folder_path 下的所有文件，并调用 upload 上传。
+    :param folder_path: 本地文件夹路径
+    :param prefix: 上传到 OSS 时对象名称的前缀（可选）
+    """
+    for root, dirs, files in os.walk(folder_path):
+        for file_name in files:
+            name_without_ext = os.path.splitext(file_name)[0]
+            file_path = os.path.join(root, file_name)
+            output_path = os.path.join(prefix, name_without_ext+'.silk').replace('\\', '/')
+            print(f'Encoding {file_path} -> {output_path}')
+            encode(file_path,output_path)
 if __name__ == "__main__":
-    mp3_file = "sun.mp3"              # 源文件 mp3
-
-    try:
-        to_pcm(mp3_file, pcm_file)
-        pcm_to_silk(encoder_exe, pcm_file, silk_file)
-        print("转换成功:", silk_file)
-    except subprocess.CalledProcessError as e:
-        print("转换失败:", e)
-    finally:
-        if os.path.exists(pcm_file):
-            os.remove(pcm_file)
+    encode_all_in_folder("./hachimi","./hachimi/output/")

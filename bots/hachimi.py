@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import asyncio
 import os
+import random
 
 import requests
 
@@ -8,6 +9,7 @@ import botpy
 from botpy import logging
 from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage, Message
+from bots.utils import oss_util
 from bots.utils.dify import chat_util
 from bots.utils.redis_client import RedisClient
 
@@ -34,24 +36,17 @@ class MyClient(botpy.Client):
         if text.startswith(' /'):
             cmd, *args = text[2:].split()
             _log.info(f"收到命令：{cmd}，参数：{args}")
-            if cmd == "哈气":
-                await message._api.post_group_message(
-                    group_openid=group_id,
-                    msg_type=0,
-                    msg_id=message.id,
-                    content="哈！"
-                )
-            elif cmd == "哈基米":
+            if cmd == "哈":
                 #上传后发送富媒体
-
-                file_url = "https://brdw-1367983852.cos.ap-chengdu.myqcloud.com/output.silk?q-sign-algorithm=sha1&q-ak=AKIDNr48oaBd-lOoqUa8nd772wB_aJHPw-sqKA3JgjRTGojqSR_ZxJkKBS121c6Mv06e&q-sign-time=1754929621;1754933221&q-key-time=1754929621;1754933221&q-header-list=host&q-url-param-list=&q-signature=4388a436b8bd59122b076bcc46d9616acf92d172&x-cos-security-token=AEwLSScBV6ROKB6u9DjjVFj7G8EAQzia385d72bed889dabe0cab0896f4e7600bWM3oOkIyq1sx-g6ccRt4-qeHOH33tQnc0iLyvbK97fd_Fl8d0E8kdMfVtRN2TlpuPilsr1dpJMPbNWZHxhLiyVuRgkjqJZAs_wG5qykuLWgK5yNhVI2QegVPu3Bpnzu0heMoIqbO1TdyYyAGrvze-7dw_-GHXA2bFFs4YwHE6D75Ime7buaQA3f4sTKYuFJdsj70GeJY9o0hBj4xdrBBLyoYns11XauLtIzI4FnOUBbGQDeshlb88sZuvyqvmPadCQ8gU0fmYBAt9n9wQS9Eaw"  # 这里需要填写上传的资源Url
+                #随机哈
+                index = random.randint(1, 14)
+                file_url = oss_util.generate_presigned_url(f"audio/hachimi/cat{index}.silk")
                 uploadMedia = await message._api.post_group_file(
                     group_openid=message.group_openid,
                     file_type=3,  # 文件类型要对应上，具体支持的类型见方法说明
                     url=file_url  # 文件Url
 
                 )
-
                 # 资源上传后，会得到Media，用于发送消息
                 await message._api.post_group_message(
                     group_openid=message.group_openid,
@@ -59,6 +54,8 @@ class MyClient(botpy.Client):
                     msg_id=message.id,
                     media=uploadMedia
                 )
+                return
+
         try:
             key = bot_name+":"+user_id
             conversation_id = None
