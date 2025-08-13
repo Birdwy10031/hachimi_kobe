@@ -1,9 +1,8 @@
 import requests
 from botpy import logging
 
-from bots import global_config
-
 _log = logging.get_logger()
+
 def get_reply(conversation_id,user_id,text,url,api_key):
     try:
         response = requests.post(url=url, headers={

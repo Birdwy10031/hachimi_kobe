@@ -148,3 +148,6 @@ temp/
 
 # vscode config
 .vscode
+
+# logs
+logs/
