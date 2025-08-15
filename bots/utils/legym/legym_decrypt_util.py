@@ -1,7 +1,7 @@
 import base64
 from Crypto.Cipher import AES
 
-from bots.utils.audio.legym import legym_encrypt_util
+from bots.utils.legym import legym_encrypt_util
 
 # DYNAMIC_FIXED 与 Rust 中 uncaesar 解码后的结果一致
 DYNAMIC_FIXED = legym_encrypt_util.uncaesar("402881hd7f39f5g5017f39g143d8062e")

@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
-import asyncio
 import os
 import random
-
-import requests
 
 import botpy
 from botpy import logging
 from botpy.ext.cog_yaml import read
-from botpy.message import GroupMessage, Message
-from bots.utils import oss_util
+from botpy.message import GroupMessage
+from bots.utils.oss import oss_util
 from bots.utils.dify import chat_util
-from bots.utils.redis_client import RedisClient
+from bots.utils.redis.redis_client import RedisClient
 
 test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
 
