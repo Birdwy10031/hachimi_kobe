@@ -48,7 +48,7 @@ def get_dynamic_key(t: int) -> str:
     v5 = abs(dest - nptr) << last_digit
     return f"{v5}{DYNAMIC_FIXED}"
 
-def encode_login_body(username: str, password: str) -> dict:
+def encrypt_login_body(username: str, password: str) -> dict:
     login_json = {
         "entrance": "1",
         "userName": username,
@@ -68,5 +68,5 @@ def encode_login_body(username: str, password: str) -> dict:
 if __name__ == "__main__":
     username = "18550940934"
     password = "Dd1810031"
-    body = encode_login_body(username, password)
+    body = encrypt_login_body(username, password)
     print(body)
