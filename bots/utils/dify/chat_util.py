@@ -20,6 +20,6 @@ def get_reply(conversation_id,user_id,text,url,api_key):
         if response.ok:
             return response.json()
         else:
-            raise Exception()
+            raise Exception(response.text)
     except Exception as e:
         raise e
