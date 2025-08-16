@@ -15,7 +15,7 @@ test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
 _log = logging.get_logger()
 # 连接redis
 redis = RedisClient(host = test_config["redis_host"],password = test_config["redis_password"])
-chat_url = test_config["hachimi_chat_url"]
+chat_url = test_config["chat_url"]
 chat_api_key = test_config["hachimi_chat_api_key"]
 
 class MyClient(botpy.Client):
