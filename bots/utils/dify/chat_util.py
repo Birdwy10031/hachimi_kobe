@@ -16,7 +16,7 @@ def get_reply(conversation_id,user_id,text,url,api_key):
                       "conversation_id": conversation_id
                   }
                 )
-        _log.info(response)
+        _log.info(response.text)
         if response.ok:
             return response.json()
         else:
