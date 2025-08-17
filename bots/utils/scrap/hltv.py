@@ -30,6 +30,7 @@ class HltvScraper:
         except Exception as e:
             _log.error(e)
     async def start(self):
+        _log.info("开始启动页面")
         self.playwright = await async_playwright().start()
         self.browser = await self.playwright.chromium.launch(headless=False)
         self.context = await self.browser.new_context()
@@ -37,6 +38,7 @@ class HltvScraper:
         await self.block_images_and_fonts()
         #首次到首页，并接受cookie
         await self.page.goto("https://www.hltv.org/", timeout=60000, wait_until="load")
+        _log.info("正在首页")
         # await self.accept_cookies()
         # try:
         #     await self.page.wait_for_selector("#CybotCookiebotDialogBodyButtonDecline", timeout=5000)
