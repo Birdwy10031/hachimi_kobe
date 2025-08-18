@@ -76,13 +76,13 @@ class MyClient(botpy.Client):
                 if meme_list:
                     sz = len(meme_list)
                     if sz > 20:
-                        for _ in range(sz):
+                        for index in range(20):
                             cur = random.randint(0,sz-1)
                             meme = meme_list[cur]
-                            reply+=f'\n {meme["barrage"]}'
+                            reply+=f'\n {index}. {meme["barrage"]}'
                     else:
-                        for meme in meme_list:
-                            reply+=f'\n {meme["barrage"]}'
+                        for index in range(sz):
+                            reply+=f'\n {index}. {meme_list[index]["barrage"]}'
                 else:
                     reply="太有小众宝藏关键词了，啥都没找到！"
                 messageResult = await message._api.post_group_message(
