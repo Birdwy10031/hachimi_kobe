@@ -60,7 +60,14 @@ class MyClient(botpy.Client):
         _log.info(text)
         #判断cmd消息
         if text.startswith(' /'):
-            cmd, arg = text[2:].split()
+            #直接给多值赋值会报错
+            parts = text[2:].split(maxsplit=1)  # 最多切成两部分
+            if len(parts) == 2:
+                cmd, arg = parts
+            elif len(parts) == 1:
+                cmd, arg = parts[0], None  # 没有参数
+            else:
+                cmd, arg = None, None
             _log.info(f"收到命令：{cmd}，参数：{arg}")
             if cmd == "来点烂梗":
                 search_url_6657 = config["search_url_6657"]
