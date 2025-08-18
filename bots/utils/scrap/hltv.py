@@ -93,6 +93,7 @@ class HltvScraper:
                 recent = await links.nth(i).locator("div.newstc div.newsrecent").inner_text()
                 news_today.append({"title": newstext, "recent": recent})
                 _log.info(newstext)
+        await self.browser.close()
         return living_name,news_today
 
     async def scrap_match_list(self):
@@ -133,6 +134,7 @@ class HltvScraper:
                     "team1": {"name": names[0], "score": scores[0][0], "mapsWon": scores[0][1],"time":None},
                     "team2": {"name": names[1], "score": scores[1][0], "mapsWon": scores[1][1],"time":None}
                 })
+        await self.browser.close()
         return matches_today
 
     async def stop(self):

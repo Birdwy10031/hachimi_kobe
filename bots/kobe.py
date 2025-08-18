@@ -30,11 +30,8 @@ def format_news_list(news_list):
         data = chat_util.get_reply(conversation_id, hltv_user_id, json.dumps(news_list), chat_url, translator_api_key)
         # 固定一个user 一个conversation
         redis.set(hltv_user_id, data["conversation_id"])
-        # 转回newsList
-        # ch_news_list = [Today(**item) for item in json.loads(data.get('answer'))]
         ch_news_list = json.loads(data.get('answer'))
         _log.info(ch_news_list.__str__)
-        print(ch_news_list.__str__())
     except Exception as e:
         _log.error(e)
 
