@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import random
 from http.client import responses
 
 import botpy
@@ -9,7 +10,9 @@ from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
 from bots.utils.dify import chat_util
 from bots.utils.redis.redis_client import RedisClient
+from bots.utils.sb_6657 import sb_6657_util
 from bots.utils.scrap.hltv import HltvScraper
+
 
 config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
 _log = logging.get_logger()
@@ -57,14 +60,29 @@ class MyClient(botpy.Client):
         _log.info(text)
         #判断cmd消息
         if text.startswith(' /'):
-            cmd, *args = text[2:].split()
-            _log.info(f"收到命令：{cmd}，参数：{args}")
-            if cmd == "man":
+            cmd, arg = text[2:].split()
+            _log.info(f"收到命令：{cmd}，参数：{arg}")
+            if cmd == "来点烂梗":
+                search_url_6657 = config["search_url_6657"]
+                meme_list = sb_6657_util.search_meme(url=search_url_6657,keyword=arg,tags="")
+                reply = ""
+                if meme_list:
+                    sz = len(meme_list)
+                    if sz > 20:
+                        for _ in range(sz):
+                            cur = random.randint(0,sz-1)
+                            meme = meme_list[cur]
+                            reply+=f'\n {meme["barrage"]}'
+                    else:
+                        for meme in meme_list:
+                            reply+=f'\n {meme["barrage"]}'
+                else:
+                    reply="太有小众宝藏关键词了，啥都没找到！"
                 messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
                     msg_id=message.id,
-                    content="What can i say?"
+                    content=reply
                 )
                 _log.info(messageResult)
                 return
