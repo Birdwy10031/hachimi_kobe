@@ -89,9 +89,17 @@ class HltvScraper:
             count = await links.count()
 
             for i in range(count):
-                newstext = await links.nth(i).locator("div.newstext").inner_text()
+                newstext = links.nth(i).locator("div.newstext")
+                if await newstext.count()==0:
+                    #没有newstext，则为头条，只给标题
+                    newstext = links.nth(i).locator("div.featured-small-newstext")
+                    title = await newstext.inner_text()
+                    news_today.append({"title": title, "recent": None})
+                    continue
+                title = await newstext.inner_text()
+
                 recent = await links.nth(i).locator("div.newstc div.newsrecent").inner_text()
-                news_today.append({"title": newstext, "recent": recent})
+                news_today.append({"title": title, "recent": recent})
                 _log.info(newstext)
         await self.browser.close()
         return living_name,news_today
