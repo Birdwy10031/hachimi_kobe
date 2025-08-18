@@ -92,7 +92,7 @@ class HltvScraper:
                 newstext = links.nth(i).locator("div.newstext")
                 if await newstext.count()==0:
                     #没有newstext，则为头条，只给标题
-                    newstext = links.nth(i).locator("div.featured-small-newstext")
+                    newstext = links.nth(i).locator("div.featured-newstext")
                     title = await newstext.inner_text()
                     news_today.append({"title": title, "recent": None})
                     continue
