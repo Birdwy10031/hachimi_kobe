@@ -121,7 +121,7 @@ class HltvScraper:
             _log.info(names)
             _log.info(twoRowExtra)
             if not names:
-                break
+                continue
             if not twoRowExtra:
                 #比赛未开始
                 time = await links.nth(i).locator(":scope div.middleExtra").inner_text()
