@@ -71,21 +71,27 @@ class MyClient(botpy.Client):
             _log.info(f"收到命令：{cmd}，参数：{arg}")
             if cmd == "来点烂梗":
                 search_url_6657 = config["search_url_6657"]
+                random_url_6657 = config["random_url_6657"]
                 meme_list = sb_6657_util.search_meme(url=search_url_6657,keyword=arg,tags="")
                 reply = ""
-                if meme_list:
-                    sz = len(meme_list)
-                    if sz > 20:
-                        rand = random.sample(range(0, sz), 20)
-                        #20个随机数
-                        for index in range(len(rand)):
-                            meme = meme_list[rand[index]]
-                            reply+=f'\n {index}. {meme["barrage"]}'
+                if arg:
+                    #有参数，搜索
+                    if meme_list:
+                        sz = len(meme_list)
+                        if sz > 20:
+                            rand = random.sample(range(0, sz), 20)
+                            #20个随机数
+                            for index in range(len(rand)):
+                                meme = meme_list[rand[index]]
+                                reply+=f'\n {index}. {meme["barrage"]}'
+                        else:
+                            for index in range(sz):
+                                reply+=f'\n {index}. {meme_list[index]["barrage"]}'
                     else:
-                        for index in range(sz):
-                            reply+=f'\n {index}. {meme_list[index]["barrage"]}'
+                        reply="太有小众宝藏关键词了，啥都没找到！"
                 else:
-                    reply="太有小众宝藏关键词了，啥都没找到！"
+                    meme = sb_6657_util.search_meme(url=random_url_6657,keyword=arg,tags="")
+                    reply+=meme["barrage"]
                 messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
@@ -181,3 +187,4 @@ if __name__ == "__main__":
     intents = botpy.Intents(public_messages=True)
     kobe = MyClient(intents=intents)
     kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+
