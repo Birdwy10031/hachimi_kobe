@@ -90,7 +90,7 @@ class MyClient(botpy.Client):
                     else:
                         reply="太有小众宝藏关键词了，啥都没找到！"
                 else:
-                    meme = sb_6657_util.search_meme(url=random_url_6657,keyword=arg,tags="")
+                    meme = sb_6657_util.random_meme(url=random_url_6657)
                     reply+=meme["barrage"]
                 messageResult = await message._api.post_group_message(
                     group_openid=group_id,
