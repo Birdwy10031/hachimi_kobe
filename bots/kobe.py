@@ -76,11 +76,11 @@ class MyClient(botpy.Client):
                 if meme_list:
                     sz = len(meme_list)
                     if sz > 20:
-                        for index in range(20):
-                            rand = random.sample(range(0, sz), 20)
-                            for n in  rand:
-                                meme = meme_list[n]
-                                reply+=f'\n {index}. {meme["barrage"]}'
+                        rand = random.sample(range(0, sz), 20)
+                        #20个随机数
+                        for index in range(len(rand)):
+                            meme = meme_list[rand[index]]
+                            reply+=f'\n {index}. {meme["barrage"]}'
                     else:
                         for index in range(sz):
                             reply+=f'\n {index}. {meme_list[index]["barrage"]}'
