@@ -139,11 +139,13 @@ class MyClient(botpy.Client):
                 for match in match_list:
                     team1 = match["team1"]
                     team2 = match["team2"]
+                    name1 = " ".join(team1.split("."))
+                    name2 = " ".join(team2.split("."))
                     if not team1["time"]:
                         #已经开打
-                        reply+=f"\n {team1['name']} vs {team2['name']} {team1['score']}({team1['mapsWon']}):{team2['mapsWon']}({team2['mapsWon']})"
+                        reply+=f"\n {name1} vs {name2} {team1['score']}({team1['mapsWon']}):{team2['mapsWon']}({team2['mapsWon']})"
                     else:
-                        reply+=f"\n {team1['name']} vs {team2['name']} {team1['time']}"
+                        reply+=f"\n {name1} vs {name2} {team1['time']}"
                 messageResult = await message._api.post_group_message(
                         group_openid=group_id,
                         msg_type=0,
@@ -179,8 +181,9 @@ if __name__ == "__main__":
     # intents = botpy.Intents.none()
     # intents.public_messages=True
 
-    #通过kwargs，设置需要监听的事件通道
+    # 通过kwargs，设置需要监听的事件通道
     intents = botpy.Intents(public_messages=True)
     kobe = MyClient(intents=intents)
     kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+
 
