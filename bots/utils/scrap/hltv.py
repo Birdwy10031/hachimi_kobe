@@ -37,7 +37,7 @@ class HltvScraper:
         self.page = await self.context.new_page()
         await self.block_images_and_fonts()
         #首次到首页，并接受cookie
-        await self.page.goto("https://www.hltv.org/", timeout=60000, wait_until="load")
+        # await self.page.goto("https://www.hltv.org/", timeout=60000, wait_until="load")
         _log.info("正在首页")
         # await self.accept_cookies()
         # try:
@@ -66,6 +66,7 @@ class HltvScraper:
         #     _log.info("Cookie 弹窗不存在")
 
     async def scrap_news_list(self):
+        await self.start()
         await self.page.goto("https://www.hltv.org/", timeout=60000, wait_until="load")
         await self.accept_cookies()
         news_today = []
@@ -105,6 +106,7 @@ class HltvScraper:
         return living_name,news_today
 
     async def scrap_match_list(self):
+        await self.start()
         await self.page.goto("https://www.hltv.org/", timeout=60000, wait_until="load")
         container = self.page.locator("div.top-border-hide")
         await container.wait_for()

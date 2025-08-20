@@ -102,8 +102,6 @@ class MyClient(botpy.Client):
                 return
             elif cmd == "hltvNews":
                 #爬取最新新闻
-                # 启动chrome
-                await scraper.start()
                 living_name,news_list =await scraper.scrap_news_list()
                 reply = ""
                 if living_name:
@@ -135,8 +133,6 @@ class MyClient(botpy.Client):
                 return
             elif cmd == "hltvMatches":
                 # 爬取赛事
-                # 启动chrome
-                await scraper.start()
                 reply = ""
                 match_list = await scraper.scrap_match_list()
                 _log.info(match_list)
