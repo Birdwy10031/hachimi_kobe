@@ -139,8 +139,8 @@ class MyClient(botpy.Client):
                 for match in match_list:
                     team1 = match["team1"]
                     team2 = match["team2"]
-                    name1 = " ".join(team1.split("."))
-                    name2 = " ".join(team2.split("."))
+                    name1 = " ".join(team1["name"].split("."))
+                    name2 = " ".join(team2["name"].split("."))
                     if not team1["time"]:
                         #已经开打
                         reply+=f"\n {name1} vs {name2} {team1['score']}({team1['mapsWon']}):{team2['mapsWon']}({team2['mapsWon']})"
