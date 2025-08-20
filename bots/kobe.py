@@ -143,7 +143,7 @@ class MyClient(botpy.Client):
                     name2 = " ".join(team2["name"].split("."))
                     if not team1["time"]:
                         #已经开打
-                        reply+=f"\n {name1} vs {name2} {team1['score']}({team1['mapsWon']}):{team2['mapsWon']}({team2['mapsWon']})"
+                        reply+=f"\n {name1} vs {name2} {team1['score']}({team1['mapsWon']}):{team2['score']}({team2['mapsWon']})"
                     else:
                         reply+=f"\n {name1} vs {name2} {team1['time']}"
                 messageResult = await message._api.post_group_message(
