@@ -49,7 +49,8 @@ class MyClient(botpy.Client):
                     group_openid=message.group_openid,
                     msg_type=7,  # 7表示富媒体类型
                     msg_id=message.id,
-                    media=uploadMedia
+                    media=uploadMedia,
+                    content="哈！"
                 )
                 return
 
