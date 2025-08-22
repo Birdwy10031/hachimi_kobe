@@ -20,6 +20,7 @@ _log = logging.get_logger()
 redis = RedisClient(host = config["redis_host"], password = config["redis_password"])
 chat_url = config["chat_url"]
 chat_api_key = config["kobe_chat_api_key"]
+upload_url = config["upload_url"]
 translator_api_key = config["translator_api_key"]
 hltv_user_id = "Counter-Strike Fun"
 scraper = HltvScraper()
@@ -30,7 +31,7 @@ def format_news_list(news_list):
     conversation_id = redis.get(hltv_user_id)
     try:
         #必须先转成dict，然后jsonstr
-        data = chat_util.get_reply(conversation_id, hltv_user_id, json.dumps(news_list), chat_url, translator_api_key)
+        data = chat_util.get_reply(conversation_id, hltv_user_id, json.dumps(news_list),[],chat_url, translator_api_key)
         # 固定一个user 一个conversation
         redis.set(hltv_user_id, data["conversation_id"])
         ch_news_list = json.loads(data.get('answer'))
@@ -154,13 +155,20 @@ class MyClient(botpy.Client):
                 )
                 _log.info(messageResult)
                 return
+        url_list = []
+        if message.attachments:
+            files = message.attachments
+            for file in files:
+                content_type=  file["content_type"]
+                url = file["url"]
+                url_list.append(url)
         try:
             key = bot_name+":"+user_id
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)
                 _log.info(f"继续对话{conversation_id}")
-            data = chat_util.get_reply(conversation_id,user_id,text,chat_url,chat_api_key)
+            data = chat_util.get_reply(conversation_id,user_id,text,url_list,chat_url,chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
@@ -185,5 +193,7 @@ if __name__ == "__main__":
     intents = botpy.Intents(public_messages=True)
     kobe = MyClient(intents=intents)
     kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+
+
 
 

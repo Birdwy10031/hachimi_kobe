@@ -60,7 +60,7 @@ class MyClient(botpy.Client):
             if redis.exists(key):
                 conversation_id = redis.get(key)
                 _log.info(f"继续对话{conversation_id}")
-            data = chat_util.get_reply(conversation_id,user_id,text,chat_url,chat_api_key)
+            data = chat_util.get_reply(conversation_id,user_id,text,[],chat_url,chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
