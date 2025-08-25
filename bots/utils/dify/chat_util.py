@@ -47,7 +47,8 @@ def upload(user_id,file_path,url,api_key):
             # 猜测文件后缀
             extension = mimetypes.guess_extension(content_type)
             if not extension:
-                extension = ".tmp"  # 如果无法猜测后缀，则使用默认扩展名 .tmp
+                extension = ".png"
+            _log.info(extension)
 
             # 创建临时文件
             with tempfile.NamedTemporaryFile(dir=temp_dir, suffix=extension, delete=False) as temp_file:
