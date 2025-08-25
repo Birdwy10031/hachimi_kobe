@@ -60,8 +60,8 @@ class MyClient(botpy.Client):
                 files = message.attachments
                 for file in files:
                     url = file.url
-                    file_id = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
-                    file_ids.append(file_id)
+                    data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
+                    file_ids.append(data["id"])
             key = bot_name+":"+user_id
             conversation_id = None
             if redis.exists(key):
