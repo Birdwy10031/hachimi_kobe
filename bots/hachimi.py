@@ -10,13 +10,14 @@ from bots.utils.oss import oss_util
 from bots.utils.dify import chat_util
 from bots.utils.redis.redis_client import RedisClient
 
-test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
+config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
 
 _log = logging.get_logger()
 # 连接redis
-redis = RedisClient(host = test_config["redis_host"],password = test_config["redis_password"])
-chat_url = test_config["chat_url"]
-chat_api_key = test_config["hachimi_chat_api_key"]
+redis = RedisClient(host = config["redis_host"], password = config["redis_password"])
+chat_url = config["chat_url"]
+chat_api_key = config["hachimi_chat_api_key"]
+upload_url = config["upload_url"]
 
 class MyClient(botpy.Client):
     async def on_ready(self):
@@ -53,14 +54,20 @@ class MyClient(botpy.Client):
                     content="哈！"
                 )
                 return
-
         try:
+            file_ids = []
+            if message.attachments:
+                files = message.attachments
+                for file in files:
+                    url = file["url"]
+                    file_id = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
+                    file_ids.append(file_id)
             key = bot_name+":"+user_id
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)
                 _log.info(f"继续对话{conversation_id}")
-            data = chat_util.get_reply(conversation_id,user_id,text,[],chat_url,chat_api_key)
+            data = chat_util.get_reply(conversation_id,user_id,text,file_ids,chat_url,chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
@@ -84,4 +91,4 @@ if __name__ == "__main__":
     # 通过kwargs，设置需要监听的事件通道
     intents = botpy.Intents(public_messages=True)
     hachimi = MyClient(intents=intents)
-    hachimi.run(appid=test_config["hachimi_appid"], secret=test_config["hachimi_secret"])
+    hachimi.run(appid=config["hachimi_appid"], secret=config["hachimi_secret"])
