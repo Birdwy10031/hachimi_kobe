@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import random
 
@@ -57,7 +58,7 @@ class MyClient(botpy.Client):
         try:
             file_ids = []
             if message.attachments:
-                files = message.attachments
+                files = json.loads(message.attachments)
                 for file in files:
                     url = file["url"]
                     file_id = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
