@@ -67,7 +67,6 @@ class MyClient(botpy.Client):
                 _log.info(messageResult)
                 return
         try:
-
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)

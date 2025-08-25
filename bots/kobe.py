@@ -23,6 +23,7 @@ chat_api_key = config["kobe_chat_api_key"]
 translator_api_key = config["translator_api_key"]
 hltv_user_id = "Counter-Strike Fun"
 scraper = HltvScraper()
+upload_url = config["upload_url"]
 def format_news_list(news_list):
 
     res = "\n"
@@ -167,12 +168,19 @@ class MyClient(botpy.Client):
                 _log.info(messageResult)
                 return
         try:
-
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)
                 _log.info(f"继续对话{conversation_id}")
-            data = chat_util.get_reply(conversation_id,user_id,text,[],chat_url,chat_api_key)
+            file_ids = []
+            if message.attachments:
+                files = message.attachments
+                for file in files:
+                    url = file.url
+                    data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
+                    file_ids.append(data["id"])
+                _log.info(file_ids)
+            data = chat_util.get_reply(conversation_id,user_id,text,file_ids=file_ids,url=chat_url,api_key=chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
