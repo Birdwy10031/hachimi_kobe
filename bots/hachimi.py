@@ -55,6 +55,11 @@ class MyClient(botpy.Client):
                 )
                 return
         try:
+            key = bot_name+":"+user_id
+            conversation_id = None
+            if redis.exists(key):
+                conversation_id = redis.get(key)
+                _log.info(f"继续对话{conversation_id}")
             file_ids = []
             if message.attachments:
                 files = message.attachments
@@ -62,11 +67,7 @@ class MyClient(botpy.Client):
                     url = file.url
                     data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
                     file_ids.append(data["id"])
-            key = bot_name+":"+user_id
-            conversation_id = None
-            if redis.exists(key):
-                conversation_id = redis.get(key)
-                _log.info(f"继续对话{conversation_id}")
+                _log.info(file_ids)
             data = chat_util.get_reply(conversation_id,user_id,text,file_ids,chat_url,chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
