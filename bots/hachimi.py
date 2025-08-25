@@ -29,6 +29,7 @@ class MyClient(botpy.Client):
         user_id = message.author.member_openid
         group_id = message.group_openid
         bot_name = self.robot.name
+        key = bot_name + ":" + user_id
         _log.info(text)
         #判断cmd消息
         if text.startswith(' /'):
@@ -54,8 +55,19 @@ class MyClient(botpy.Client):
                     content="哈！"
                 )
                 return
+            elif cmd=='大记忆恢复术':
+                if redis.exists(key):
+                    redis.delete(key)
+                messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content="记忆清空了",
+                        )
+                _log.info(messageResult)
+                return
         try:
-            key = bot_name+":"+user_id
+
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)

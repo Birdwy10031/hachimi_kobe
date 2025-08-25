@@ -47,7 +47,7 @@ def upload(user_id,file_path,url,api_key):
             # 猜测文件后缀
             extension = mimetypes.guess_extension(content_type)
             if not extension:
-                extension = ".png"
+                extension = ".jpg"
             _log.info(extension)
 
             # 创建临时文件
