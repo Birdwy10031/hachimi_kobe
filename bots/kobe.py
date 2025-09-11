@@ -264,11 +264,11 @@ if __name__ == "__main__":
     # intents.public_messages=True
 
     # 通过kwargs，设置需要监听的事件通道
-    # intents = botpy.Intents(public_messages=True)
-    # kobe = MyClient(intents=intents)
-    # kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
-    client = LegymClient()
-    client.quick_run(username="18550940934",password="Dd1810031",mileage=4.8,end_time=datetime.now() - timedelta( minutes= 25))
+    intents = botpy.Intents(public_messages=True)
+    kobe = MyClient(intents=intents)
+    kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+    # client = LegymClient()
+    # client.quick_run(username="18550940934",password="Dd1810031",mileage=4.8,end_time=datetime.now() - timedelta( minutes= 25))
 
 
 
