@@ -281,7 +281,7 @@ class LegymClient:
             _log.info(data)
             data = client.get_limit()
             _log.info(data)
-            BASE_DIR = pathlib.Path(__file__).parent.parent  # kobe.py 在 bots/，parent.parent 指项目根目录
+            BASE_DIR = pathlib.Path(__file__).parent.parent.parent  # kobe.py 在 bots/，parent.parent 指项目根目录
             geojson_path = (BASE_DIR / 'utils/legym/map.geojson').resolve()
             with open(geojson_path, "r", encoding="utf-8") as f:
                 content = f.read()
