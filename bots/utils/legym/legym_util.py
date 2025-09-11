@@ -215,7 +215,8 @@ class LegymClient:
         mileage = min(mileage,self.daily-self.day,self.weekly-self.week,self.end)
         if mileage < self.start:
             #小于最小里程
-            return False
+            _log.info("刷满了")
+            return 0
         #随机扰动
         mileage += random.uniform(-0.02,-0.001)
         #根据配速计算总时长 总耗时 15s扰动
@@ -256,8 +257,6 @@ class LegymClient:
 
         #签名后上传
         self.sign_run_data(data=raw_data,a1=self.user.id,a2=self.user.school_id)
-        _log.info(json.dumps(raw_data, indent=2, ensure_ascii=False))
-        _log.info(json.dumps(headers))
         try:
             response = requests.post(
                 url=self.UPLOAD_URL,

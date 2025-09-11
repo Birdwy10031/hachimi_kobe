@@ -4,7 +4,7 @@ import json
 import os
 import random
 from bdb import effective
-from datetime import datetime
+from datetime import datetime, timedelta
 from http.client import responses
 
 import botpy
@@ -210,8 +210,10 @@ class MyClient(botpy.Client):
                 client = legym_util.LegymClient()
                 try:
                     effective = 0
+                    end_time = datetime.now()-timedelta(minutes=100)
                     for i in range(3):
-                        effective += client.quick_run(username=username,password=password,mileage=13.0,end_time=datetime.now())
+                        effective += client.quick_run(username=username,password=password,mileage=4.8,end_time=end_time)
+                        end_time+=timedelta(minutes=50)
                         if i<2:
                             #3s
                             await asyncio.sleep(3)
@@ -262,9 +264,11 @@ if __name__ == "__main__":
     # intents.public_messages=True
 
     # 通过kwargs，设置需要监听的事件通道
-    intents = botpy.Intents(public_messages=True)
-    kobe = MyClient(intents=intents)
-    kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+    # intents = botpy.Intents(public_messages=True)
+    # kobe = MyClient(intents=intents)
+    # kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+    client = LegymClient()
+    client.quick_run(username="18550940934",password="Dd1810031",mileage=4.8,end_time=datetime.now() - timedelta( minutes= 25))
 
 
 
