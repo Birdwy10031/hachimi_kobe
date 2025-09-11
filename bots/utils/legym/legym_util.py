@@ -1,4 +1,5 @@
 import json
+import pathlib
 import random
 from dataclasses import dataclass
 from datetime import timedelta, datetime
@@ -280,7 +281,7 @@ class LegymClient:
             _log.info(data)
             data = client.get_limit()
             _log.info(data)
-            with open("./utils/legym/map.geojson", "r", encoding="utf-8") as f:
+            with open(pathlib.Path("./utils/legym/map.geojson"), "r", encoding="utf-8") as f:
                 content = f.read()
                 data = client.upload(mileage=mileage, end_time=end_time, geojson_str=content)
                 _log.info(data)
