@@ -2,6 +2,7 @@
 import json
 import os
 import random
+from datetime import datetime
 from http.client import responses
 
 import botpy
@@ -9,6 +10,8 @@ from botpy import logging
 from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
 from bots.utils.dify import chat_util
+from bots.utils.legym import legym_util
+from bots.utils.legym.legym_util import LegymClient
 from bots.utils.redis.redis_client import RedisClient
 from bots.utils.sb_6657 import sb_6657_util
 from bots.utils.scrap.hltv import HltvScraper
@@ -155,20 +158,75 @@ class MyClient(botpy.Client):
                 )
                 _log.info(messageResult)
                 return
-        url_list = []
-        if message.attachments:
-            files = message.attachments
-            for file in files:
-                content_type=  file["content_type"]
-                url = file["url"]
-                url_list.append(url)
+            elif cmd=='大记忆恢复术':
+                key = bot_name+":"+user_id
+                if redis.exists(key):
+                    redis.delete(key)
+                messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content="记忆清空了",
+                        )
+                _log.info(messageResult)
+                return
+            elif cmd == "bind":
+                key = bot_name+":"+"legym"+":"+user_id
+                parts = arg.split(maxsplit=1)  # 最多切成两部分
+                if len(parts) == 2:
+
+                    redis.set(key,parts)
+                else:
+                    messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content="输入格式错误"
+                    )
+                    _log.info(messageResult)
+                    return
+            elif cmd == "run":
+                key = bot_name+":"+"legym"+":"+user_id
+                info = redis.get(key)
+                if not info:
+                    messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content="未绑定"
+                    )
+                    _log.info(messageResult)
+                    return
+                username, password = info.split(maxsplit=1)
+                client = legym_util.LegymClient()
+                try:
+                    client.quick_run(username=username,password=password,mileage=13.0,end_time=datetime.now())
+                    messageResult = await message._api.post_group_message(
+                            group_openid=group_id,
+                            msg_type=0,
+                            msg_id=message.id,
+                            content="上传成功"
+                    )
+                    _log.info(messageResult)
+                except Exception as e:
+                    _log.info(e)
+                finally:
+                    return
+
         try:
             key = bot_name+":"+user_id
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)
                 _log.info(f"继续对话{conversation_id}")
-            data = chat_util.get_reply(conversation_id,user_id,text,url_list,chat_url,chat_api_key)
+            file_ids = []
+            if message.attachments:
+                for file in message.attachments:
+                    url = file.url
+                    data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
+                    file_ids.append(data["id"])
+                _log.info(file_ids)
+            data = chat_util.get_reply(conversation_id,user_id,text,file_ids=file_ids,url=chat_url,api_key=chat_api_key)
             messageResult = await message._api.post_group_message(
                     group_openid=group_id,
                     msg_type=0,
@@ -193,6 +251,7 @@ if __name__ == "__main__":
     intents = botpy.Intents(public_messages=True)
     kobe = MyClient(intents=intents)
     kobe.run(appid=config["kobe_appid"], secret=config["kobe_secret"])
+
 
 
 
