@@ -266,7 +266,7 @@ class LegymClient:
             if response.ok:
                 data = response.json()
                 _log.info(data)
-                return True
+                return mileage
         except Exception as e:
             raise e
     def quick_run(self,username,password,mileage,end_time):
@@ -284,6 +284,7 @@ class LegymClient:
                 content = f.read()
                 data = client.upload(mileage=mileage, end_time=end_time, geojson_str=content)
                 _log.info(data)
+                return data
         except Exception as e:
             raise e
 

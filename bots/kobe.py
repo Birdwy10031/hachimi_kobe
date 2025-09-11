@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import asyncio
 import json
 import os
 import random
+from bdb import effective
 from datetime import datetime
 from http.client import responses
 
@@ -174,8 +176,15 @@ class MyClient(botpy.Client):
                 key = bot_name+":"+"legym"+":"+user_id
                 parts = arg.split(maxsplit=1)  # 最多切成两部分
                 if len(parts) == 2:
-
-                    redis.set(key,parts)
+                    redis.set(key,arg)
+                    messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content="绑定成功"
+                    )
+                    _log.info(messageResult)
+                    return
                 else:
                     messageResult = await message._api.post_group_message(
                         group_openid=group_id,
@@ -200,12 +209,17 @@ class MyClient(botpy.Client):
                 username, password = info.split(maxsplit=1)
                 client = legym_util.LegymClient()
                 try:
-                    client.quick_run(username=username,password=password,mileage=13.0,end_time=datetime.now())
+                    effective = 0
+                    for i in range(3):
+                        effective += client.quick_run(username=username,password=password,mileage=13.0,end_time=datetime.now())
+                        if i<2:
+                            #3s
+                            await asyncio.sleep(3)
                     messageResult = await message._api.post_group_message(
                             group_openid=group_id,
                             msg_type=0,
                             msg_id=message.id,
-                            content="上传成功"
+                            content=f"上传成功"
                     )
                     _log.info(messageResult)
                 except Exception as e:
