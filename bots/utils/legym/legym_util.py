@@ -281,7 +281,9 @@ class LegymClient:
             _log.info(data)
             data = client.get_limit()
             _log.info(data)
-            with open(pathlib.Path("./utils/legym/map.geojson").resolve(), "r", encoding="utf-8") as f:
+            BASE_DIR = pathlib.Path(__file__).parent.parent  # kobe.py 在 bots/，parent.parent 指项目根目录
+            geojson_path = (BASE_DIR / 'utils/legym/map.geojson').resolve()
+            with open(geojson_path, "r", encoding="utf-8") as f:
                 content = f.read()
                 data = client.upload(mileage=mileage, end_time=end_time, geojson_str=content)
                 _log.info(data)
