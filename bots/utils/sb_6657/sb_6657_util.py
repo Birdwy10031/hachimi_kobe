@@ -12,8 +12,9 @@ def search_meme(url,keyword,tags):
     try:
         response = requests.post(url, headers=headers, json={
             "barrage":keyword,
-            "submitTime":[],
-            "tags":""
+            "pageNum":0,
+            "pageSize":20,
+            "sort":0
         })
         if response.ok:
             data = response.json().get("data")
