@@ -79,6 +79,7 @@ class MyClient(botpy.Client):
                 search_url_6657 = config["search_url_6657"]
                 random_url_6657 = config["random_url_6657"]
                 meme_list = sb_6657_util.search_meme(url=search_url_6657,keyword=arg,tags="")
+                _log.info(meme_list)
                 reply = ""
                 if arg:
                     #有参数，搜索

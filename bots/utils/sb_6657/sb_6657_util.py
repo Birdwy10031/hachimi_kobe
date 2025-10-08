@@ -12,7 +12,7 @@ def search_meme(url,keyword,tags):
     try:
         response = requests.post(url, headers=headers, json={
             "barrage":keyword,
-            "pageNum":0,
+            "pageNum":1,
             "pageSize":20,
             "sort":0
         })
