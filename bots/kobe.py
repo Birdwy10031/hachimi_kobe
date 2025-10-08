@@ -78,7 +78,8 @@ class MyClient(botpy.Client):
             if cmd == "来点烂梗":
                 search_url_6657 = config["search_url_6657"]
                 random_url_6657 = config["random_url_6657"]
-                meme_list = sb_6657_util.search_meme(url=search_url_6657,keyword=arg,tags="")
+                data = sb_6657_util.search_meme(url=search_url_6657,keyword=arg,tags="")
+                meme_list = data["list"]
                 _log.info(meme_list)
                 reply = ""
                 if arg:
