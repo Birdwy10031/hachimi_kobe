@@ -170,6 +170,9 @@ class MyClient(botpy.Client):
                 key = bot_name+":"+user_id
                 if redis.exists(key):
                     redis.delete(key)
+                key = bot_name+":"+"voice"+":"+user_id
+                if redis.exists(key):
+                    redis.delete(key)
                 messageResult = await message._api.post_group_message(
                         group_openid=group_id,
                         msg_type=0,
