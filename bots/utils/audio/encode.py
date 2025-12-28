@@ -1,6 +1,8 @@
 import subprocess
 import os
+from pathlib import Path
 
+base_dir = Path(__file__).parent
 def to_pcm(mp3_path, pcm_path):
     cmd = [
         "ffmpeg",
@@ -35,7 +37,7 @@ def pcm_to_silk(encoder_path, pcm_path, silk_path):
 
 pcm_file = "temp.pcm"             # 临时 PCM 文件
 # silk_file = "output.silk"         # 生成的 silk 文件
-encoder_exe = "./encoder.exe"     # 编码器可执行文件路径
+encoder_exe = (base_dir / "encoder.exe").__str__()     # 编码器可执行文件路径
 def encode(audio_path,silk_file):
     try:
         to_pcm(audio_path, pcm_file)

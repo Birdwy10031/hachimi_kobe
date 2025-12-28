@@ -1,9 +1,7 @@
 import os
-import time
 from datetime import timedelta
 
 import alibabacloud_oss_v2 as oss
-
 region = 'cn-chengdu'
 bucket = 'hachimi-kobe-bots'
 # 从环境变量中加载凭证信息，用于身份验证
@@ -66,6 +64,39 @@ def main():
           f'etag: {result.etag}'
     )
 
+
+def upload_with_expiry(key: str, file_path: str, expire_days: int = 1):
+    """
+    上传文件并设置过期时间
+
+    Args:
+        key: OSS对象键
+        file_path: 本地文件路径
+        expire_days: 过期天数（默认7天）
+    """
+    client = oss.Client(cfg)
+
+    # 设置过期时间头
+    from datetime import datetime, timezone
+    expire_time = datetime.now(timezone.utc) + timedelta(days=expire_days)
+
+    # 设置过期时间到响应头
+    headers = {
+        'x-oss-expires': str(int(expire_time.timestamp()))
+    }
+
+    result = client.put_object_from_file(
+        oss.PutObjectRequest(
+            bucket=bucket,
+            key=key,
+            headers=headers
+        ),
+        file_path
+    )
+
+    print(f'✅ 上传成功，文件将在 {expire_days} 天后过期')
+    print(f'   过期时间: {expire_time.strftime("%Y-%m-%d %H:%M:%S")}')
+    return result
 def upload(key:str,file_path:str):
     # 使用配置好的信息创建OSS客户端
     client = oss.Client(cfg)
@@ -79,7 +110,6 @@ def upload(key:str,file_path:str):
         ),
         file_path  # 本地文件路径
     )
-    client.presign()
     # 输出请求的结果信息，包括状态码、请求ID、内容MD5、ETag、CRC64校验码、版本ID和服务器响应时间
     print(f'status code: {result.status_code},'
           f' request id: {result.request_id},'
@@ -104,6 +134,32 @@ def upload_all_in_folder(folder_path, prefix=''):
             print(f'Uploading {file_path} -> {key}')
             upload(key, file_path)
 
+
+def delete_file(key: str):
+    """
+    删除OSS上的文件
+
+    Args:
+        key: OSS对象键
+    """
+    client = oss.Client(cfg)
+
+    try:
+        result = client.delete_object(
+            oss.DeleteObjectRequest(
+                bucket=bucket,
+                key=key
+            )
+        )
+
+        print(f'🗑️  删除成功: {key}')
+        print(f'   删除标记: {result.delete_marker}')
+        print(f'   版本ID: {result.version_id}')
+        return result
+
+    except Exception as e:
+        print(f'❌ 删除失败: {e}')
+        raise
 def generate_presigned_url(key: str, expire_seconds: int = 3600):
     """
     生成带签名的临时 URL

@@ -141,7 +141,6 @@ cython_debug/
 config.y*ml
 tests/.test.yaml
 botpy.log.*
-temp/
 
 # idea config
 .idea

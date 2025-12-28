@@ -3,17 +3,18 @@ import asyncio
 import json
 import os
 import random
-from bdb import effective
 from datetime import datetime, timedelta
-from http.client import responses
 
 import botpy
 from botpy import logging
 from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
+from bots.utils.audio import encode
+from bots.utils.call_tools import ali_call
 from bots.utils.dify import chat_util
 from bots.utils.legym import legym_util
 from bots.utils.legym.legym_util import LegymClient
+from bots.utils.oss import oss_util
 from bots.utils.redis.redis_client import RedisClient
 from bots.utils.sb_6657 import sb_6657_util
 from bots.utils.scrap.hltv import HltvScraper
@@ -27,6 +28,7 @@ chat_url = config["chat_url"]
 chat_api_key = config["kobe_chat_api_key"]
 upload_url = config["upload_url"]
 translator_api_key = config["translator_api_key"]
+chat_voice_api_key = config["chat_voice_api_key"]
 hltv_user_id = "Counter-Strike Fun"
 scraper = HltvScraper()
 def format_news_list(news_list):
@@ -64,6 +66,8 @@ class MyClient(botpy.Client):
         group_id = message.group_openid
         bot_name = self.robot.name
         _log.info(text)
+        cmd = ''
+        temp_folder = "./temp/"
         #判断cmd消息
         if text.startswith(' /'):
             #直接给多值赋值会报错
@@ -233,6 +237,11 @@ class MyClient(botpy.Client):
 
         try:
             key = bot_name+":"+user_id
+            #判断回复类型
+            api_key = chat_api_key
+            if cmd=='voice':
+                api_key= chat_voice_api_key
+                key = bot_name+":"+"voice"+":"+user_id
             conversation_id = None
             if redis.exists(key):
                 conversation_id = redis.get(key)
@@ -241,17 +250,49 @@ class MyClient(botpy.Client):
             if message.attachments:
                 for file in message.attachments:
                     url = file.url
-                    data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=chat_api_key)
+                    data = chat_util.upload(user_id=user_id, file_path=url,url=upload_url,api_key=api_key)
                     file_ids.append(data["id"])
                 _log.info(file_ids)
-            data = chat_util.get_reply(conversation_id,user_id,text,file_ids=file_ids,url=chat_url,api_key=chat_api_key)
-            messageResult = await message._api.post_group_message(
-                    group_openid=group_id,
-                    msg_type=0,
+            data = chat_util.get_reply(conversation_id, user_id, text, file_ids=file_ids, url=chat_url, api_key=api_key)
+            if cmd == 'voice':
+                voice_path = temp_folder+"kobe.mp3"
+                ali_call.generate_voice(data.get('answer') ,voice_path)
+                _log.info(voice_path)
+                temp_path = temp_folder+"temp.silk"
+                encode.encode(voice_path, temp_path)
+                #上传oss
+                oss_key = "audio/temp/temp.silk"
+                oss_util.upload(oss_key, temp_path)
+                #删除临时文件
+                os.remove(temp_path)
+                os.remove(voice_path)
+                print(f"临时文件 {temp_path} 已删除")
+                #生成临时url
+                file_url = oss_util.generate_presigned_url(oss_key)
+                uploadMedia = await message._api.post_group_file(
+                    group_openid=message.group_openid,
+                    file_type=3,  # 文件类型要对应上，具体支持的类型见方法说明
+                    url=file_url  # 文件Url
+
+                )
+                # 资源上传后，会得到Media，用于发送消息
+                await message._api.post_group_message(
+                    group_openid=message.group_openid,
+                    msg_type=7,  # 7表示富媒体类型
                     msg_id=message.id,
-                    content=data.get('answer'),
-                    )
-            _log.info(messageResult)
+                    media=uploadMedia,
+                    content="哈！"
+                )
+                #删除临时文件
+                oss_util.delete_file(oss_key)
+            else:
+                messageResult = await message._api.post_group_message(
+                        group_openid=group_id,
+                        msg_type=0,
+                        msg_id=message.id,
+                        content=data.get('answer'),
+                        )
+                _log.info(messageResult)
             #关联 user->conversation_id
             #保留20min
             redis.set(key,data.get("conversation_id"),ex=1200)
