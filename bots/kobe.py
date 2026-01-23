@@ -245,7 +245,7 @@ class MyClient(botpy.Client):
             if cmd=='voice':
                 api_key= chat_voice_api_key
                 key = bot_name+":"+"voice"+":"+user_id
-                text=text[6:]
+                text=text.removeprefix("/voice")
 
             conversation_id = None
             if redis.exists(key):
