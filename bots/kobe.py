@@ -271,9 +271,10 @@ class MyClient(botpy.Client):
                 #删除临时文件
                 os.remove(temp_path)
                 os.remove(voice_path)
-                print(f"临时文件 {temp_path} 已删除")
+                _log.info(f"临时文件 {temp_path} 已删除")
                 #生成临时url
                 file_url = oss_util.generate_presigned_url(oss_key)
+                _log.info(file_url)
                 uploadMedia = await message._api.post_group_file(
                     group_openid=message.group_openid,
                     file_type=3,  # 文件类型要对应上，具体支持的类型见方法说明
