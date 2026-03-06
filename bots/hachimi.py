@@ -6,8 +6,9 @@ import botpy
 from botpy import logging
 from botpy.ext.cog_yaml import read
 from botpy.message import GroupMessage
-from bots.utils.oss import oss_util
+# from bots.utils.oss import oss_util
 from bots.utils.dify import chat_util
+from bots.utils.oss import cos_util
 from bots.utils.redis.redis_client import RedisClient
 
 test_config = read(os.path.join(os.path.dirname(__file__), "config.yaml"))
@@ -37,7 +38,7 @@ class MyClient(botpy.Client):
                 #上传后发送富媒体
                 #随机哈
                 index = random.randint(1, 14)
-                file_url = oss_util.generate_presigned_url(f"audio/hachimi/cat{index}.silk")
+                file_url = cos_util.generate_presigned_url(f"audio/hachimi/cat{index}.silk")
                 uploadMedia = await message._api.post_group_file(
                     group_openid=message.group_openid,
                     file_type=3,  # 文件类型要对应上，具体支持的类型见方法说明

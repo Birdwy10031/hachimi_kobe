@@ -14,7 +14,8 @@ from bots.utils.call_tools import ali_call
 from bots.utils.dify import chat_util
 from bots.utils.legym import legym_util
 from bots.utils.legym.legym_util import LegymClient
-from bots.utils.oss import oss_util
+from bots.utils.oss import cos_util
+# from bots.utils.oss import oss_util
 from bots.utils.redis.redis_client import RedisClient
 from bots.utils.sb_6657 import sb_6657_util
 from bots.utils.scrap.hltv import HltvScraper
@@ -267,13 +268,13 @@ class MyClient(botpy.Client):
                 encode.encode(voice_path, temp_path)
                 #上传oss
                 oss_key = "audio/temp/temp.silk"
-                oss_util.upload(oss_key, temp_path)
+                cos_util.upload(oss_key, temp_path)
                 #删除临时文件
                 os.remove(temp_path)
                 os.remove(voice_path)
                 _log.info(f"临时文件 {temp_path} 已删除")
                 #生成临时url
-                file_url = oss_util.generate_presigned_url(oss_key)
+                file_url = cos_util.generate_presigned_url(oss_key,120)
                 _log.info(file_url)
                 uploadMedia = await message._api.post_group_file(
                     group_openid=message.group_openid,
@@ -290,7 +291,7 @@ class MyClient(botpy.Client):
                     content="哈！"
                 )
                 #删除临时文件
-                oss_util.delete_file(oss_key)
+                # oss_util.delete_file(oss_key)
             else:
                 messageResult = await message._api.post_group_message(
                         group_openid=group_id,
